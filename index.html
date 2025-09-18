@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantIQ AI - Advanced Plant Health Monitoring</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary: #ffa000;
+            --secondary-light: #ffc107;
+            --secondary-dark: #ff6f00;
+            --text: #212121;
+            --text-light: #757575;
+            --background: #f5f5f5;
+            --card-bg: #ffffff;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --success: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 0;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary-light);
+        }
+
+        .nav-active {
+            border-bottom: 2px solid var(--secondary-light);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .card-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            color: var(--primary-light);
+        }
+
+        .sensor-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .sensor-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(46, 125, 50, 0.05);
+            border-radius: 10px;
+        }
+
+        .sensor-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .sensor-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .health-status {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .health-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--success);
+            line-height: 1;
+            margin: 15px 0;
+        }
+
+        .health-message {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .diagnosis {
+            margin: 20px 0;
+        }
+
+        .diagnosis h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .diagnosis p {
+            background: rgba(255, 160, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .history-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .history-charts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            height: 350px;
+        }
+
+        .simulation-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .simulation-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-good {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .analysis-section {
+            margin-top: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-light);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--text-light);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-healthy {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1001;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .active-page {
+            display: block;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .history-table th {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: var(--primary);
+        }
+
+        .history-table tr:hover {
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+
+        .settings-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .settings-group {
+            background: rgba(46, 125, 50, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .settings-group h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">PlantIQ AI is analyzing your plant...</div>
+
+    <div class="modal" id="recommendations-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2><i class="fas fa-lightbulb"></i> PlantIQ AI Recommendations</h2>
+            <div id="recommendations-content">
+                <p>Based on your plant's current condition, here are our recommendations:</p>
+                <ul>
+                    <li>Water when soil moisture drops below 35%</li>
+                    <li>Maintain temperature between 18-28°C</li>
+                    <li>Provide 6-8 hours of indirect sunlight daily</li>
+                    <li>Test soil pH monthly and adjust as needed</li>
+                    <li>Inspect leaves weekly for signs of pests or disease</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <h1>PlantIQ AI</h1>
+                </div>
+                <nav class="nav-links">
+                    <a id="nav-dashboard" class="nav-active"><i class="fas fa-home"></i> Dashboard</a>
+                    <a id="nav-history"><i class="fas fa-history"></i> History</a>
+                    <a id="nav-settings"><i class="fas fa-cog"></i> Settings</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active-page">
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Sensor Data</h2>
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="sensor-data">
+                        <div class="sensor-item">
+                            <i class="fas fa-tint sensor-icon"></i>
+                            <div class="sensor-value" id="moisture-value">42%</div>
+                            <div class="sensor-label">Soil Moisture</div>
+                        </div>
+                        <div class="sensor-item">
+                            <i class="fas fa-thermometer-half sensor-icon"></i>
+                            <div class="sensor-value" id="temperature-value">24°C</div>
+                            <div class="sensor-label">Temperature</div>
+                        </div>
+                        <div class="sensor-item">
+                            <i class="fas fa-sun sensor-icon"></i>
+                            <div class="sensor-value" id="light-value">65%</div>
+                            <div class="sensor-label">Light Exposure</div>
+                        </div>
+                        <div class="sensor-item">
+                            <i class="fas fa-vial sensor-icon"></i>
+                            <div class="sensor-value" id="ph-value">6.5</div>
+                            <div class="sensor-label">Soil pH</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Health Status</h2>
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="health-status">
+                        <div class="health-score" id="health-score">87%</div>
+                        <div class="health-message" id="health-message">Your plant is in good health!</div>
+                        <div class="badge badge-healthy" id="health-badge">Healthy</div>
+                    </div>
+                    <div class="diagnosis">
+                        <h3>AI Diagnosis</h3>
+                        <p id="diagnosis-text">PlantIQ AI detects no signs of disease or nutrient deficiencies. Your plant is thriving in its current environment.</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-primary" id="analyze-btn">
+                            <i class="fas fa-brain"></i> Analyze with AI
+                        </button>
+                        <button class="btn btn-secondary" id="recommend-btn">
+                            <i class="fas fa-lightbulb"></i> Get Recommendations
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-charts">
+                <div class="chart-container">
+                    <canvas id="moisture-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="temperature-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>AI Analysis</h2>
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="analysis-section">
+                    <p>Upload a plant image for advanced AI analysis or use the simulation controls to test different scenarios.</p>
+                    
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Click to Upload Plant Image</h3>
+                        <p>Supported formats: JPG, PNG, WEBP</p>
+                    </div>
+
+                    <div class="simulation-controls">
+                        <p><strong>Simulation Controls:</strong> Test how PlantIQ AI responds to different conditions</p>
+                        <button class="simulation-btn btn-good" id="simulate-healthy">Simulate Healthy Plant</button>
+                        <button class="simulation-btn btn-warning" id="simulate-water">Simulate Under-Watering</button>
+                        <button class="simulation-btn btn-danger" id="simulate-disease">Simulate Disease</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Page -->
+        <div id="history-page" class="page">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Plant Health History</h2>
+                </div>
+                <p>View historical data and past health assessments for your plants.</p>
+                
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Plant</th>
+                            <th>Health Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>May 15, 2025 10:30 AM</td>
+                            <td>Monstera Deliciosa</td>
+                            <td>92%</td>
+                            <td><span class="badge badge-healthy">Excellent</span></td>
+                            <td><button class="btn-primary">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>May 14, 2025 09:15 AM</td>
+                            <td>Snake Plant</td>
+                            <td>87%</td>
+                            <td><span class="badge badge-healthy">Healthy</span></td>
+                            <td><button class="btn-primary">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>May 13, 2025 03:45 PM</td>
+                            <td>Peace Lily</td>
+                            <td>65%</td>
+                            <td><span class="badge badge-warning">Needs Water</span></td>
+                            <td><button class="btn-primary">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>May 12, 2025 11:20 AM</td>
+                            <td>Basil</td>
+                            <td>78%</td>
+                            <td><span class="badge badge-healthy">Good</span></td>
+                            <td><button class="btn-primary">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>May 10, 2025 02:15 PM</td>
+                            <td>Tomato Plant</td>
+                            <td>42%</td>
+                            <td><span class="badge badge-danger">Disease Detected</span></td>
+                            <td><button class="btn-primary">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-cog"></i> System Settings</h2>
+                </div>
+                
+                <div class="settings-panel">
+                    <div class="settings-group">
+                        <h3>Plant Preferences</h3>
+                        <div class="form-group">
+                            <label for="plant-type">Plant Type</label>
+                            <select id="plant-type">
+                                <option>Monstera Deliciosa</option>
+                                <option>Snake Plant</option>
+                                <option>Peace Lily</option>
+                                <option>Basil</option>
+                                <option>Tomato Plant</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="plant-name">Plant Name</label>
+                            <input type="text" id="plant-name" value="Green Buddy">
+                        </div>
+                        <div class="form-group">
+                            <label for="watering-schedule">Watering Schedule</label>
+                            <select id="watering-schedule">
+                                <option>When soil is dry</option>
+                                <option>Every 3 days</option>
+                                <option>Weekly</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Alert Preferences</h3>
+                        <div class="form-group">
+                            <label for="moisture-alert">Soil Moisture Alert</label>
+                            <select id="moisture-alert">
+                                <option>Below 30%</option>
+                                <option>Below 25%</option>
+                                <option>Below 20%</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="temp-alert">Temperature Alert</label>
+                            <select id="temp-alert">
+                                <option>Below 15°C or Above 30°C</option>
+                                <option>Below 18°C or Above 28°C</option>
+                                <option>Custom Range</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notification-frequency">Notification Frequency</label>
+                            <select id="notification-frequency">
+                                <option>Only critical alerts</option>
+                                <option>Daily summary</option>
+                                <option>Real-time updates</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="save-btn" id="save-settings">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>PlantIQ AI - Advanced Plant Health Monitoring System</p>
+            <p>© 2025 PlantIQ AI | All rights reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize charts
+        const moistureCtx = document.getElementById('moisture-chart').getContext('2d');
+        const temperatureCtx = document.getElementById('temperature-chart').getContext('2d');
+        
+        // Generate time labels for the last 24 hours
+        const timeLabels = [];
+        for (let i = 23; i >= 0; i--) {
+            const time = new Date();
+            time.setHours(time.getHours() - i);
+            timeLabels.push(time.getHours() + ':00');
+        }
+
+        // Generate sample data
+        const generateSampleData = (baseValue, fluctuation) => {
+            return timeLabels.map(() => {
+                return baseValue + (Math.random() * fluctuation * 2 - fluctuation);
+            });
+        };
+
+        const moistureData = generateSampleData(45, 8);
+        const temperatureData = generateSampleData(24, 2.5);
+
+        const moistureChart = new Chart(moistureCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Soil Moisture (%)',
+                    data: moistureData,
+                    borderColor: '#2e7d32',
+                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Soil Moisture History (24h)'
+                    }
+                }
+            }
+        });
+
+        const temperatureChart = new Chart(temperatureCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: '#ffa000',
+                    backgroundColor: 'rgba(255, 160, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Temperature History (24h)'
+                    }
+                }
+            }
+        });
+
+        // DOM Elements
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const recommendBtn = document.getElementById('recommend-btn');
+        const uploadArea = document.getElementById('upload-area');
+        const simulateHealthy = document.getElementById('simulate-healthy');
+        const simulateWater = document.getElementById('simulate-water');
+        const simulateDisease = document.getElementById('simulate-disease');
+        const notification = document.getElementById('notification');
+        const recommendationsModal = document.getElementById('recommendations-modal');
+        const closeModal = document.getElementById('close-modal');
+        const saveSettingsBtn = document.getElementById('save-settings');
+        
+        // Navigation Elements
+        const navDashboard = document.getElementById('nav-dashboard');
+        const navHistory = document.getElementById('nav-history');
+        const navSettings = document.getElementById('nav-settings');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const historyPage = document.getElementById('history-page');
+        const settingsPage = document.getElementById('settings-page');
+
+        // Navigation Functions
+        navDashboard.addEventListener('click', function() {
+            dashboardPage.classList.add('active-page');
+            historyPage.classList.remove('active-page');
+            settingsPage.classList.remove('active-page');
+            
+            // Update active nav style
+            navDashboard.classList.add('nav-active');
+            navHistory.classList.remove('nav-active');
+            navSettings.classList.remove('nav-active');
+            
+            showNotification('Dashboard loaded');
+        });
+
+        navHistory.addEventListener('click', function() {
+            historyPage.classList.add('active-page');
+            dashboardPage.classList.remove('active-page');
+            settingsPage.classList.remove('active-page');
+            
+            // Update active nav style
+            navHistory.classList.add('nav-active');
+            navDashboard.classList.remove('nav-active');
+            navSettings.classList.remove('nav-active');
+            
+            showNotification('History loaded');
+        });
+
+        navSettings.addEventListener('click', function() {
+            settingsPage.classList.add('active-page');
+            dashboardPage.classList.remove('active-page');
+            historyPage.classList.remove('active-page');
+            
+            // Update active nav style
+            navSettings.classList.add('nav-active');
+            navDashboard.classList.remove('nav-active');
+            navHistory.classList.remove('nav-active');
+            
+            showNotification('Settings loaded');
+        });
+
+        // Update sensor values with random fluctuations
+        function updateSensorValues() {
+            const moisture = 42 + (Math.random() * 6 - 3);
+            const temperature = 24 + (Math.random() * 1.5 - 0.75);
+            const light = 65 + (Math.random() * 10 - 5);
+            const ph = 6.5 + (Math.random() * 0.4 - 0.2);
+            
+            document.getElementById('moisture-value').textContent = moisture.toFixed(1) + '%';
+            document.getElementById('temperature-value').textContent = temperature.toFixed(1) + '°C';
+            document.getElementById('light-value').textContent = light.toFixed(0) + '%';
+            document.getElementById('ph-value').textContent = ph.toFixed(1);
+            
+            // Update charts with new data
+            moistureChart.data.datasets[0].data.push(moisture);
+            moistureChart.data.datasets[0].data.shift();
+            
+            temperatureChart.data.datasets[0].data.push(temperature);
+            temperatureChart.data.datasets[0].data.shift();
+            
+            moistureChart.update();
+            temperatureChart.update();
+            
+            // Update health score based on sensor values
+            updateHealthStatus(moisture, temperature, light, ph);
+        }
+
+        // Update health status based on sensor readings
+        function updateHealthStatus(moisture, temperature, light, ph) {
+            let healthScore = 85;
+            let healthMessage = "Your plant is in good health!";
+            let healthBadge = "Healthy";
+            let diagnosisText = "PlantIQ AI detects no signs of disease or nutrient deficiencies. Your plant is thriving in its current environment.";
+            
+            // Adjust health score based on conditions
+            if (moisture < 35) {
+                healthScore -= 15;
+                healthMessage = "Your plant needs water!";
+                healthBadge = "Needs Attention";
+                diagnosisText = "PlantIQ AI detects low soil moisture levels. Consider watering your plant to prevent stress.";
+            } else if (moisture > 55) {
+                healthScore -= 10;
+                healthMessage = "Soil is too wet!";
+                healthBadge = "Needs Attention";
+                diagnosisText = "PlantIQ AI detects excessive soil moisture. Ensure proper drainage to prevent root rot.";
+            }
+            
+            if (temperature < 18 || temperature > 30) {
+                healthScore -= 10;
+                healthMessage = "Temperature not optimal";
+                healthBadge = "Needs Attention";
+                diagnosisText = "PlantIQ AI detects suboptimal temperature conditions. Consider moving your plant to a more suitable location.";
+            }
+            
+            if (ph < 6.0 || ph > 7.0) {
+                healthScore -= 5;
+                healthMessage = "Soil pH needs adjustment";
+                healthBadge = "Needs Attention";
+                diagnosisText = "PlantIQ AI detects suboptimal soil pH levels. Consider amending the soil to achieve the ideal pH range for your plant.";
+            }
+            
+            // Ensure health score is within bounds
+            healthScore = Math.max(30, Math.min(95, healthScore));
+            
+            // Update UI
+            document.getElementById('health-score').textContent = healthScore.toFixed(0) + '%';
+            document.getElementById('health-message').textContent = healthMessage;
+            document.getElementById('diagnosis-text').textContent = diagnosisText;
+            
+            // Update badge
+            const healthBadgeElement = document.getElementById('health-badge');
+            healthBadgeElement.textContent = healthBadge;
+            healthBadgeElement.className = 'badge ';
+            
+            if (healthScore >= 80) {
+                healthBadgeElement.classList.add('badge-healthy');
+            } else if (healthScore >= 60) {
+                healthBadgeElement.classList.add('badge-warning');
+            } else {
+                healthBadgeElement.classList.add('badge-danger');
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Simulate different plant conditions
+        simulateHealthy.addEventListener('click', function() {
+            document.getElementById('moisture-value').textContent = '45%';
+            document.getElementById('temperature-value').textContent = '24°C';
+            document.getElementById('light-value').textContent = '70%';
+            document.getElementById('ph-value').textContent = '6.5';
+            
+            document.getElementById('health-score').textContent = '92%';
+            document.getElementById('health-message').textContent = 'Your plant is in excellent health!';
+            document.getElementById('diagnosis-text').textContent = 'PlantIQ AI detects optimal growing conditions. Your plant shows no signs of stress, disease, or nutrient deficiencies.';
+            
+            const healthBadge = document.getElementById('health-badge');
+            healthBadge.textContent = 'Excellent';
+            healthBadge.className = 'badge badge-healthy';
+            
+            showNotification('Healthy plant scenario activated');
+        });
+
+        simulateWater.addEventListener('click', function() {
+            document.getElementById('moisture-value').textContent = '22%';
+            document.getElementById('temperature-value').textContent = '28°C';
+            document.getElementById('light-value').textContent = '80%';
+            document.getElementById('ph-value').textContent = '6.8';
+            
+            document.getElementById('health-score').textContent = '65%';
+            document.getElementById('health-message').textContent = 'Your plant needs water!';
+            document.getElementById('diagnosis-text').textContent = 'PlantIQ AI detects significant water stress. The soil moisture is critically low. Water your plant thoroughly and consider providing shade to reduce evaporation.';
+            
+            const healthBadge = document.getElementById('health-badge');
+            healthBadge.textContent = 'Needs Water';
+            healthBadge.className = 'badge badge-warning';
+            
+            showNotification('Under-watering scenario activated');
+        });
+
+        simulateDisease.addEventListener('click', function() {
+            document.getElementById('moisture-value').textContent = '58%';
+            document.getElementById('temperature-value').textContent = '19°C';
+            document.getElementById('light-value').textContent = '40%';
+            document.getElementById('ph-value').textContent = '5.2';
+            
+            document.getElementById('health-score').textContent = '42%';
+            document.getElementById('health-message').textContent = 'Your plant shows signs of disease!';
+            document.getElementById('diagnosis-text').textContent = 'PlantIQ AI detects possible fungal infection due to excessive moisture and low temperatures. Isolate the plant, improve drainage, and consider applying an organic fungicide.';
+            
+            const healthBadge = document.getElementById('health-badge');
+            healthBadge.textContent = 'Disease Detected';
+            healthBadge.className = 'badge badge-danger';
+            
+            showNotification('Disease scenario activated');
+        });
+
+        // Analyze with AI button
+        analyzeBtn.addEventListener('click', function() {
+            showNotification('PlantIQ AI is analyzing your plant...');
+            
+            // Simulate analysis delay
+            setTimeout(() => {
+                document.getElementById('health-score').textContent = '87%';
+                document.getElementById('health-message').textContent = 'Comprehensive analysis complete!';
+                document.getElementById('diagnosis-text').textContent = 'PlantIQ AI has completed a thorough analysis. Your plant is generally healthy but could benefit from slightly more light and a small dose of nitrogen-rich fertilizer.';
+                
+                const healthBadge = document.getElementById('health-badge');
+                healthBadge.textContent = 'Good Health';
+                healthBadge.className = 'badge badge-healthy';
+                
+                showNotification('Analysis complete! Check the health status for recommendations.');
+            }, 2500);
+        });
+
+        // Get recommendations button
+        recommendBtn.addEventListener('click', function() {
+            recommendationsModal.style.display = 'flex';
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            recommendationsModal.style.display = 'none';
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', function(event) {
+            if (event.target === recommendationsModal) {
+                recommendationsModal.style.display = 'none';
+            }
+        });
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', function() {
+            showNotification('In a full implementation, this would open a file dialog to upload an image for analysis.');
+        });
+
+        // Save settings button
+        saveSettingsBtn.addEventListener('click', function() {
+            showNotification('Settings saved successfully!');
+        });
+
+        // Initialize with random values and update every 10 seconds
+        updateSensorValues();
+        setInterval(updateSensorValues, 10000);
+    </script>
+</body>
+</html>
